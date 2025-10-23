@@ -40,7 +40,7 @@ jobs:
       # Isso permite baixar os relatórios XML/TXT direto do GitHub Actions
       - name: Upload test reports
         if: always() # Roda este passo mesmo se os testes falharem
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: surefire-reports # Nome do pacote de artefatos
           path: target/surefire-reports # Pasta que queremos salvar
