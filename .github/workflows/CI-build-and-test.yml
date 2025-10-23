@@ -1,0 +1,46 @@
+# Nome do nosso workflow (vai aparecer na aba Actions do GitHub)
+name: Java CI with Maven
+
+# Gatilho: Quando este workflow deve rodar?
+on:
+  # Roda toda vez que houver um push para a branch 'main'
+  push:
+    branches: [ main ]
+  # Roda toda vez que houver um pull request para a branch 'main'
+  pull_request:
+    branches: [ main ]
+
+# Tarefas: O que o workflow deve fazer?
+jobs:
+  # Nome da nossa tarefa (pode ser qualquer nome)
+  build:
+    # Em qual tipo de máquina virtual esta tarefa vai rodar? (Ubuntu é o mais comum e gratuito)
+    runs-on: ubuntu-latest
+
+    # Passos sequenciais que a tarefa vai executar
+    steps:
+      # 1. Baixar o código do seu repositório para a máquina virtual
+      - name: Checkout code
+        uses: actions/checkout@v3 # Usa uma "Action" pronta da comunidade
+
+      # 2. Configurar o ambiente Java (JDK 17) na máquina virtual
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3 # Outra Action pronta
+        with:
+          java-version: '17'
+          distribution: 'temurin' # A mesma distribuição que instalamos
+          cache: maven # Guarda as dependências baixadas para acelerar builds futuros
+
+      # 3. Executar os testes usando o Maven
+      - name: Build and test with Maven
+        # Roda o comando 'mvn test'. O '-B' é para rodar em modo não interativo.
+        run: mvn -B test
+
+      # (Opcional, mas útil) 4. Salvar os relatórios de teste como "artefatos"
+      # Isso permite baixar os relatórios XML/TXT direto do GitHub Actions
+      - name: Upload test reports
+        if: always() # Roda este passo mesmo se os testes falharem
+        uses: actions/upload-artifact@v3
+        with:
+          name: surefire-reports # Nome do pacote de artefatos
+          path: target/surefire-reports # Pasta que queremos salvar
