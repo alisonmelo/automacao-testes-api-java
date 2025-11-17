@@ -67,4 +67,44 @@ public class ReqResTests {
                 .when().delete("https://reqres.in/api/users/2")
                 .then().log().ifValidationFails().statusCode(204);
     }
+
+    @Test
+    public void testRegisterNewUser_MissingPassword() {
+        // Corpo da requisição: Enviamos o email, mas OMITIMOS a senha
+        String requestBody = "{ \"email\": \"eve.holt@reqres.in\" }";
+
+        given()
+                // Headers necessários que já descobrimos
+                .header("Content-Type", "application/json")
+                .header("x-api-key", "reqres-free-v1")
+                .body(requestBody)
+                .when()
+                .post("https://reqres.in/api/register")
+                .then()
+                // A nossa ferramenta de depuração, útil se o teste falhar
+                .log().body()
+                // A EXPECTATIVA AGORA É UM ERRO 400
+                .statusCode(400)
+                // Verificamos se a API nos deu a mensagem de erro correta
+                .body("error", equalTo("Missing password"));
+    }
+
+    @Test
+    public void testUpdateUser() {
+        String requestBody = "{ \"name\": \"Alison Matheus\", \"job\": \"QA Pleno Senior\" }";
+
+        given()
+                .header("Content-Type", "application/json")
+                .header("x-api-key", "reqres-free-v1")
+                .body(requestBody)
+                .when()
+                // A ação agora é um PUT para um recurso específico (user 2)
+                .put("https://reqres.in/api/users/2")
+                .then()
+                .log().body()
+                // A expectativa padrão para um UPDATE bem-sucedido é 200 OK
+                .statusCode(200)
+                // Verificamos se a resposta da API reflete a atualização que fizemos
+                .body("job", equalTo("QA Pleno Senior"));
+    }
 }
