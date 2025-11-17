@@ -21,7 +21,7 @@ jobs:
     steps:
       # 1. Baixar o código do seu repositório para a máquina virtual
       - name: Checkout code
-        uses: actions/artifact@v4 # Usa uma "Action" pronta da comunidade
+        uses: actions/download-artifact@v4 # Usa uma "Action" pronta da comunidade
 
       # 2. Configurar o ambiente Java (JDK 17) na máquina virtual
       - name: Set up JDK 17
